@@ -1,0 +1,44 @@
+[urls]
+disableUrl = "http://disable.xxxx.com/"
+alertUrl = "http://alert.xxx.xxxx.com/"
+
+
+[log]
+dir = "/tmp/logs/"
+prefix = "error_logs"
+level = 0
+
+
+[usrMysql]
+host = "127.0.0.1"
+port = 3306
+user = "liwq"
+pass = "liwqtest"
+db = "test"
+
+
+[cycle]
+	[cycle.cycle001]
+	bakPath = "/tmp/logs/"
+	[cycle.cycle001]
+	bakPath = "/tmp/logs/"
+	funcs = ["test001", "test002"]
+
+
+[msgRedis]
+host = "127.0.0.1"
+port = 6379
+suffix = "_online"
+
+
+[httpListen]
+	[httpListen.srv001]
+	host = ":8098"
+	[httpListen.srv002]
+	host = ":8099"
+
+
+[userLevel]
+host = "127.0.0.1"
+port = 3333
+prefix = "level_"
