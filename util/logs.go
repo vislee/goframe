@@ -8,6 +8,7 @@ import (
 	"path"
 	"runtime"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -29,10 +30,11 @@ type GfLogs struct {
 	prefix  string
 	dateStr string
 	mutex   *sync.Mutex
+	dupStd  bool
 }
 
 // NewLogs returns an GfLogs instance.
-func NewLogs(dir, prefix string, level int) (*GfLogs, error) {
+func NewLogs(dir, prefix string, level int, dupstd bool) (*GfLogs, error) {
 	if dir == "-" {
 		os.Exit(1)
 	}
@@ -47,7 +49,7 @@ func NewLogs(dir, prefix string, level int) (*GfLogs, error) {
 	glogs := GfLogs{level: level, dir: dir, prefix: prefix}
 	glogs.mutex = &sync.Mutex{}
 	glogs.dateStr = time.Now().Format("2006-01-02")
-
+	glogs.dupStd = dupstd
 	return &glogs, glogs.init()
 }
 
@@ -68,6 +70,11 @@ func (l *GfLogs) init() error {
 	}
 
 	l.Close()
+
+	if l.dupStd {
+		syscall.Dup2(int(fp.Fd()), syscall.Stdout)
+		syscall.Dup2(int(fp.Fd()), syscall.Stderr)
+	}
 
 	l.fp = fp
 	l.logger = log.New(fp, "", log.Ldate|log.Ltime)
